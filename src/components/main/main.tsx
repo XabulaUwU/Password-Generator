@@ -161,6 +161,9 @@ export function Main() {
     upper!.checked = false;
     lower!.checked = false;
     special!.checked = false;
+    isChecked.upper = false;
+    isChecked.lower = false;
+    isChecked.special = false;
     passShow!.textContent = `${password}`;
   }
   function copy() {
