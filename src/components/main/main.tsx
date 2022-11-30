@@ -6,6 +6,7 @@ export function Main() {
   const upper = document.getElementById("upper") as HTMLInputElement | null;
   const lower = document.getElementById("lower") as HTMLInputElement | null;
   const special = document.getElementById("special") as HTMLInputElement | null;
+  const desc = document.getElementById("desc");
   const passShow = document.getElementById(
     "passShow"
   ) as HTMLInputElement | null;
@@ -17,6 +18,16 @@ export function Main() {
     special: false,
   };
   const [char, setChar] = useState(0);
+  const strength = document.getElementById("strength");
+  const strongRegex = new RegExp(
+    "^(?=.{14,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$",
+    "g"
+  );
+  const mediumRegex = new RegExp(
+    "^(?=.{10,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$",
+    "g"
+  );
+  const enoughRegex = new RegExp("(?=.{8,}).*", "g");
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target === upper) {
       isChecked.upper = e.target.checked;
@@ -157,7 +168,7 @@ export function Main() {
         password += newChars.substring(randomNumber, randomNumber + 1);
       }
     }
-    console.log(isChecked);
+
     upper!.checked = false;
     lower!.checked = false;
     special!.checked = false;
@@ -165,6 +176,25 @@ export function Main() {
     isChecked.lower = false;
     isChecked.special = false;
     passShow!.textContent = `${password}`;
+
+    if (password.length === 0) {
+      strength!.innerHTML = "Type Password";
+    } else if (false === enoughRegex.test(password)) {
+      strength!.innerHTML = "More Characters";
+      desc!.innerHTML = "Password length is under 8 characters.";
+    } else if (strongRegex.test(password)) {
+      strength!.innerHTML = "Strong!";
+      desc!.innerHTML =
+        "Password length is 14 characters or more and has a combination of symbols, caps, text.";
+    } else if (mediumRegex.test(password)) {
+      strength!.innerHTML = "Medium!";
+      desc!.innerHTML =
+        "Password length is 10 characters or more and has a combination of symbols, caps, text.";
+    } else {
+      strength!.innerHTML = "Weak!";
+      desc!.innerHTML =
+        "Password length is less than 10 characters and doesn't contain a combination of symbols, caps, text.";
+    }
   }
   function copy() {
     navigator.clipboard.writeText(passShow!.innerHTML);
@@ -172,11 +202,20 @@ export function Main() {
   return (
     <main>
       <h1>Password Generator</h1>
+
       <div id="passContainer">
         <span id="passShow"> </span>
         <button type="button" onClick={copy}>
           <ReactLogo />
         </button>
+      </div>
+      <div id="passStrength">
+        <p>
+          Password Strength: <span id="strength"></span>
+        </p>
+        <p>
+          Description: <span id="desc"></span>
+        </p>
       </div>
       <div id="settings">
         <p>
